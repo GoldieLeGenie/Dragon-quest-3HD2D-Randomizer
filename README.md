@@ -5,7 +5,7 @@ This tool allows you to randomize various aspects of Dragon Quest III HD for a u
 Download and extract the ZIP archive.
 Make sure to extract all contents into a dedicated folder.
 
-Run DQ3-HD-Randomizer.exe from the extracted folder.
+Run Main.exe from the extracted folder.
 
 -🛠️ How to Use
 Select the options to randomize:
