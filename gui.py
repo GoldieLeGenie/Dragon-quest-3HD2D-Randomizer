@@ -3,11 +3,25 @@ from tkinter import ttk, messagebox
 import randomize
 import subprocess
 import shutil
-
+import os
 # Paths and commands
 unrealpak_path = r"repak.exe"
 source_folder = r"Game-WindowsNoEditor_test"
 command = [unrealpak_path, "pack", source_folder]
+game_folder = r"Game-WindowsNoEditor_test/Game/Content/Nicola/Data/DataTable"
+
+def clear_game_folder():
+    """Clear the contents of the game folder before proceeding."""
+    try:
+        for filename in os.listdir(game_folder):
+            file_path = os.path.join(game_folder, filename)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to delete files in {game_folder}: {e}")
+
 
 def toggle_area_options():
     """Enable or disable options related to area randomization."""
@@ -36,6 +50,7 @@ def process_selection():
         messagebox.showerror("Error", "Please select at least one randomization option.")
         return
     
+    clear_game_folder()
     if shop_var.get():
         randomize.randomize_shop_items()
     if price_var.get():
@@ -78,6 +93,7 @@ def process_selection():
     try:
         subprocess.run(command, check=True)
         shutil.move("Game-WindowsNoEditor_test.pak", "./pak/Game-WindowsNoEditor_test.pak")
+        clear_game_folder()
         messagebox.showinfo("Success", "Randomization completed! Copy the .pak file and paste it into the game folder's pak directory (..\Program Files (x86)\Steam\steamapps\common\DRAGON QUEST III HD-2D Remake\Game\Content\Paks).")
     except subprocess.CalledProcessError:
         messagebox.showerror("Error", "There was an error creating the .pak file!")
