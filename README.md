@@ -30,4 +30,4 @@ Ensure that the .pak file is copied to the correct directory.
 
 -📝 Credits
 Developed by Goldie. Current version: v0.1.
-Feel free to report bugs or suggest improvements via GitHub Issues.
+Feel free to report bugs or suggest improvements via GitHub Issues or to my discord: goldiiie
