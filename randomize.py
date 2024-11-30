@@ -11,7 +11,7 @@ from UAssetAPI.UnrealTypes import EngineVersion
 import tkinter as tk
 from tkinter import messagebox
 import utils
-
+from collections import defaultdict
 
 def randomize_buy_price(min_price, max_price):
     try:
@@ -186,3 +186,34 @@ def randomize_shine_items(min_gold, max_gold):
     ModifiedAsset = UAsset.DeserializeJson(json.dumps(json_asset))
     ModifiedAsset.Write(f"./Game-WindowsNoEditor_test/Game/Content/Nicola/Data/DataTable/GOP_ShineSearchObject")
         
+
+def randomize_learning():
+    
+    myAsset = UAsset("./uasset/GOP_Learning.uasset", EngineVersion.VER_UE4_27)
+    json_asset = json.loads(myAsset.SerializeJson())
+
+    skills_by_category = defaultdict(list)
+
+    for data in json_asset["Exports"][0]["Table"]["Data"]:
+        category = None
+        for spell in data["Value"]:
+            if spell["Name"] == "SelfId":
+                category = spell["Value"].split('_')[1].capitalize()  
+            elif spell["Name"] == "SkillId" and category:
+                skills_by_category[category].append(spell["Value"])
+
+    for category, skills in skills_by_category.items():
+        random.shuffle(skills)  
+
+    for data in json_asset["Exports"][0]["Table"]["Data"]:
+        category = None
+        for spell in data["Value"]:
+            if spell["Name"] == "SelfId":
+                category = spell["Value"].split('_')[1].capitalize()
+            elif spell["Name"] == "SkillId" and category:
+                old_skill = spell["Value"]
+                spell["Value"] = skills_by_category[category].pop(0)  
+
+    ModifiedAsset = UAsset.DeserializeJson(json.dumps(json_asset))
+    ModifiedAsset.Write("./Game-WindowsNoEditor_test/Game/Content/Nicola/Data/DataTable/GOP_Learning.uasset")
+

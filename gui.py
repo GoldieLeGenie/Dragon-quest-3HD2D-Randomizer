@@ -3,11 +3,25 @@ from tkinter import ttk, messagebox
 import randomize
 import subprocess
 import shutil
-
+import os
 # Paths and commands
 unrealpak_path = r"repak.exe"
 source_folder = r"Game-WindowsNoEditor_test"
 command = [unrealpak_path, "pack", source_folder]
+game_folder = r"Game-WindowsNoEditor_test/Game/Content/Nicola/Data/DataTable"
+
+def clear_game_folder():
+    """Clear the contents of the game folder before proceeding."""
+    try:
+        for filename in os.listdir(game_folder):
+            file_path = os.path.join(game_folder, filename)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+    except Exception as e:
+        messagebox.showerror("Error", f"Failed to delete files in {game_folder}: {e}")
+
 
 def toggle_area_options():
     """Enable or disable options related to area randomization."""
@@ -32,10 +46,11 @@ def toggle_shine_options():
     max_shine_spinbox.config(state=state)
 
 def process_selection():
-    if not (shop_var.get() or price_var.get() or area_var.get() or shine_var.get() or medals_var.get() or other_var.get() or monster_var.get() or monster_drop_var.get()):
+    if not (shop_var.get() or price_var.get() or area_var.get() or shine_var.get() or medals_var.get() or other_var.get() or monster_var.get() or monster_drop_var.get() or skills_var.get()):
         messagebox.showerror("Error", "Please select at least one randomization option.")
         return
     
+    clear_game_folder()
     if shop_var.get():
         randomize.randomize_shop_items()
     if price_var.get():
@@ -75,9 +90,12 @@ def process_selection():
         randomize.randomize_monster_spawn()
     if monster_drop_var.get():
         randomize.randomize_monster_drop()
+    if skills_var.get():
+        randomize.randomize_learning()
     try:
         subprocess.run(command, check=True)
         shutil.move("Game-WindowsNoEditor_test.pak", "./pak/Game-WindowsNoEditor_test.pak")
+        clear_game_folder()
         messagebox.showinfo("Success", "Randomization completed! Copy the .pak file and paste it into the game folder's pak directory (..\Program Files (x86)\Steam\steamapps\common\DRAGON QUEST III HD-2D Remake\Game\Content\Paks).")
     except subprocess.CalledProcessError:
         messagebox.showerror("Error", "There was an error creating the .pak file!")
@@ -115,6 +133,7 @@ other_var = tk.BooleanVar()
 monster_var = tk.BooleanVar()
 monster_drop_var = tk.BooleanVar()
 shine_var = tk.BooleanVar()
+skills_var =  tk.BooleanVar()
 
 # Shop tab
 ttk.Checkbutton(shop_tab, text="Randomize Shop Items", variable=shop_var).pack(anchor="w", pady=5)
@@ -181,6 +200,7 @@ max_shine_spinbox.set(500000)  # Default value
 max_shine_spinbox.grid(row=1, column=1, padx=20)
 
 # Other tab
+ttk.Checkbutton(other_tab, text="Randomize Learning Skills", variable=skills_var).pack(anchor="w", pady=5)
 ttk.Checkbutton(other_tab, text="Randomize Mini Medals Rewards", variable=medals_var).pack(anchor="w", pady=5)
 ttk.Checkbutton(other_tab, text="Randomize Start Bag Items", variable=other_var).pack(anchor="w", pady=5)
 ttk.Checkbutton(other_tab, text="Randomize Monster Spawns", variable=monster_var).pack(anchor="w", pady=5)
@@ -189,7 +209,6 @@ ttk.Checkbutton(other_tab, text="Randomize Monster Drops", variable=monster_drop
 # Apply Button
 apply_button = ttk.Button(root, text="Randomize", command=process_selection)
 apply_button.pack(pady=10)
-
 
 def start():
     root.mainloop()
