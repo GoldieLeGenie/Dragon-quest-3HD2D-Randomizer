@@ -184,7 +184,7 @@ def randomize_shine_items(min_gold, max_gold):
                     item["Value"] = random.choice(utils.item_names)
 
     ModifiedAsset = UAsset.DeserializeJson(json.dumps(json_asset))
-    ModifiedAsset.Write(f"./Game-WindowsNoEditor_test/Game/Content/Nicola/Data/DataTable/GOP_ShineSearchObject")
+    ModifiedAsset.Write(f"./Game-WindowsNoEditor_test/Game/Content/Nicola/Data/DataTable/GOP_ShineSearchObject.uasset")
         
 
 def randomize_learning():
