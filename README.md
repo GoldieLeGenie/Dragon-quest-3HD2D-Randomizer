@@ -1,4 +1,4 @@
-=======================================================================================================================
+============
 DQ3-HD-Randomizer Beta-v0.1 
 This tool allows you to randomize various aspects of Dragon Quest III HD for a unique and customized gameplay experience.
 
