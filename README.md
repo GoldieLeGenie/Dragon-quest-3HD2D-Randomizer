@@ -1,6 +1,4 @@
-<<<<<<< HEAD
-
-=======
+============
 DQ3-HD-Randomizer Beta-v0.1 
 This tool allows you to randomize various aspects of Dragon Quest III HD for a unique and customized gameplay experience.
 
@@ -34,4 +32,4 @@ Ensure that the .pak file is copied to the correct directory.
 -📝 Credits
 Developed by Goldie. Current version: v0.1.
 Feel free to report bugs or suggest improvements via GitHub Issues or to my discord: goldiiie
->>>>>>> 1709faa6d7f0e462e39abad8ffcf301e1da1d640
+=======
