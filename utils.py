@@ -66,7 +66,11 @@ def create_uasset():
                 print(f"Erreur lors du traitement de {uasset_path}: {e}")
 
 
+<<<<<<< HEAD
 def items_or_golds_or_empty(pourcentage_golds,pourcentage_items,pourcentage_empty):
+=======
+def items_or_golds_or_empty(pourcentage_golds, pourcentage_items, pourcentage_empty):
+>>>>>>> 6e9351ce316da4255c7e36fcec02e7f05fabf092
    
     if pourcentage_items + pourcentage_golds + pourcentage_empty != 100:
         raise ValueError("Error % is not equal to 100%.")
