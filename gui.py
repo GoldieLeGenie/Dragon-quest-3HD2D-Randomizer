@@ -4,6 +4,7 @@ import randomize
 import subprocess
 import shutil
 import os
+
 # Paths and commands
 unrealpak_path = r"repak.exe"
 source_folder = r"Game-WindowsNoEditor_test"
@@ -22,7 +23,6 @@ def clear_game_folder():
     except Exception as e:
         messagebox.showerror("Error", f"Failed to delete files in {game_folder}: {e}")
 
-
 def toggle_area_options():
     """Enable or disable options related to area randomization."""
     state = 'normal' if area_var.get() else 'disabled'
@@ -31,7 +31,6 @@ def toggle_area_options():
     gold_spinbox.config(state=state)
     items_spinbox.config(state=state)
     empty_spinbox.config(state=state)
-
 
 def toggle_price_options():
     """Enable or disable options related to price randomization."""
@@ -44,9 +43,9 @@ def toggle_shine_options():
     state = 'normal' if shine_var.get() else 'disabled'
     min_shine_spinbox.config(state=state)
     max_shine_spinbox.config(state=state)
-
+   
 def process_selection():
-    if not (shop_var.get() or price_var.get() or area_var.get() or shine_var.get() or medals_var.get() or other_var.get() or monster_var.get() or monster_drop_var.get() or skills_var.get()):
+    if not (area_no_dupe_var.get() or shop_var.get() or price_var.get() or area_var.get() or shine_var.get() or medals_var.get() or other_var.get() or monster_var.get() or monster_drop_var.get() or skills_var.get() or shine_no_dupe_var.get()):
         messagebox.showerror("Error", "Please select at least one randomization option.")
         return
     
@@ -80,8 +79,9 @@ def process_selection():
         if min_gold >= max_gold:
             messagebox.showerror("Error", "Min Price should be less than Max Price")
             return
-        randomize.randomize_shine_items(min_gold, max_gold)
-        
+        else:
+            randomize.randomize_shine_items(min_gold, max_gold)
+    
     if medals_var.get():
         randomize.randomize_mini_medals_rewards()
     if other_var.get():
@@ -92,17 +92,22 @@ def process_selection():
         randomize.randomize_monster_drop()
     if skills_var.get():
         randomize.randomize_learning()
+    if shine_no_dupe_var.get():
+        randomize.randomize_shine_items_no_dupes()
+    if area_no_dupe_var.get():
+        randomize.randomize_all_area_loot_no_dupes()
     try:
         subprocess.run(command, check=True)
         shutil.move("Game-WindowsNoEditor_test.pak", "./pak/Game-WindowsNoEditor_test.pak")
         clear_game_folder()
-        messagebox.showinfo("Success", "Randomization completed! Copy the .pak file and paste it into the game folder's pak directory (..\Program Files (x86)\Steam\steamapps\common\DRAGON QUEST III HD-2D Remake\Game\Content\Paks).")
+        messagebox.showinfo("Success", "Randomization completed! Copy the .pak file and paste it into the game folder's pak directory.")
     except subprocess.CalledProcessError:
         messagebox.showerror("Error", "There was an error creating the .pak file!")
-    
+
+
 # Main interface
 root = tk.Tk()
-root.title("DQ3-HD-RANDOMIZER V0.1 by Goldie :)")
+root.title("DQ3-HD-RANDOMIZER V0.3 by Goldie :)")
 root.geometry('450x650')
 root.config(bg="#2e2e2e")
 
@@ -128,12 +133,14 @@ notebook.add(other_tab, text="Other")
 shop_var = tk.BooleanVar()
 price_var = tk.BooleanVar()
 area_var = tk.BooleanVar()
+area_no_dupe_var = tk.BooleanVar()
 medals_var = tk.BooleanVar()
 other_var = tk.BooleanVar()
 monster_var = tk.BooleanVar()
 monster_drop_var = tk.BooleanVar()
 shine_var = tk.BooleanVar()
 skills_var =  tk.BooleanVar()
+shine_no_dupe_var = tk.BooleanVar()
 
 # Shop tab
 ttk.Checkbutton(shop_tab, text="Randomize Shop Items", variable=shop_var).pack(anchor="w", pady=5)
@@ -153,7 +160,8 @@ max_price_spinbox.set(500000)  # Default value
 max_price_spinbox.grid(row=1, column=1, padx=20)
 
 # Area tab
-ttk.Checkbutton(area_tab, text="Randomize Areas (chest,pot...)", variable=area_var, command=toggle_area_options).pack(anchor="w", pady=5)
+ttk.Checkbutton(area_tab, text="Randomize Areas\n(only with items available in area)", variable=area_no_dupe_var).pack(anchor="w", pady=5)
+ttk.Checkbutton(area_tab, text="Randomize Areas\n(randomize all chest,pot...)", variable=area_var, command=toggle_area_options).pack(anchor="w", pady=5)
 
 area_frame = tk.Frame(area_tab, bg="#1e1e1e")
 area_frame.pack(anchor="w", pady=5)
@@ -183,8 +191,8 @@ empty_spinbox = ttk.Spinbox(area_frame, from_=0, to=100, state='disabled', font=
 empty_spinbox.set(0)  # Default value
 empty_spinbox.grid(row=4, column=1, padx=20)
 
-# Shine tab
-ttk.Checkbutton(area_tab, text="Randomize Shine Object", variable=shine_var, command=toggle_shine_options).pack(anchor="w", pady=5)
+ttk.Checkbutton(area_tab, text="Randomize Shine Object \n(only with items available in the map)", variable=shine_no_dupe_var).pack(anchor="w", pady=5)
+ttk.Checkbutton(area_tab, text="Randomize Shine Object\n(randomize all items)", variable=shine_var, command=toggle_shine_options).pack(anchor="w", pady=5)
 
 shine_frame = tk.Frame(area_tab, bg="#1e1e1e")
 shine_frame.pack(anchor="w", pady=5)
@@ -199,9 +207,10 @@ max_shine_spinbox = ttk.Spinbox(shine_frame, from_=1, to=500000, state='disabled
 max_shine_spinbox.set(500000)  # Default value
 max_shine_spinbox.grid(row=1, column=1, padx=20)
 
+
 # Other tab
 ttk.Checkbutton(other_tab, text="Randomize Learning Skills", variable=skills_var).pack(anchor="w", pady=5)
-ttk.Checkbutton(other_tab, text="Randomize Mini Medals Rewards", variable=medals_var).pack(anchor="w", pady=5)
+ttk.Checkbutton(other_tab, text="Randomize Mini-Medals Rewards", variable=medals_var).pack(anchor="w", pady=5)
 ttk.Checkbutton(other_tab, text="Randomize Start Bag Items", variable=other_var).pack(anchor="w", pady=5)
 ttk.Checkbutton(other_tab, text="Randomize Monster Spawns", variable=monster_var).pack(anchor="w", pady=5)
 ttk.Checkbutton(other_tab, text="Randomize Monster Drops", variable=monster_drop_var).pack(anchor="w", pady=5)

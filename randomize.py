@@ -83,6 +83,7 @@ def randomize_all_area_loot(min_price, max_price,gold_percentage, items_percenta
 
                     if item_name == "ItemId" and item_value in utils.important_items:
                         continue
+                    
                     if draw_result == "gold" and item_name == "Gold":
                         item["Value"] = random.randint(min_price, max_price)
                     elif draw_result == "gold" and item_name in {"ItemId", "ItemNum"}:
@@ -142,8 +143,6 @@ def randomize_monster_drop():
                     item = random.choice(utils.item_names)
                     Drop_Item["Value"] = item
                 
-          
-            
     ModifiedAsset = UAsset.DeserializeJson(json.dumps(json_asset))
     ModifiedAsset.Write("./Game-WindowsNoEditor_test/Game/Content/Nicola/Data/DataTable/GOP_Monster.uasset")
 
@@ -217,3 +216,108 @@ def randomize_learning():
     ModifiedAsset = UAsset.DeserializeJson(json.dumps(json_asset))
     ModifiedAsset.Write("./Game-WindowsNoEditor_test/Game/Content/Nicola/Data/DataTable/GOP_Learning.uasset")
 
+
+
+def randomize_all_area_loot_no_dupes():
+    all_gold = []
+    all_items = []
+
+    directory = r".\uasset"
+    files = [
+        os.path.join(directory, file)
+        for file in os.listdir(directory)
+        if file.startswith("GOP_SearchObject") and file.endswith(".uasset")
+    ]
+    
+    for file in files:
+        try:
+            myAsset = UAsset(file, EngineVersion.VER_UE4_27)
+            json_asset = json.loads(myAsset.SerializeJson())
+
+            for data in json_asset.get("Exports", [{}])[0].get("Table", {}).get("Data", []):
+                for item in data.get("Value", []):
+                    item_name = item.get("Name")
+                    item_value = item.get("Value")
+
+                    if item_name == "ItemId" and item_value in utils.important_items:
+                        continue
+
+                    if item_name == "Gold" and item_value != 0:
+                        all_gold.append(item_value)
+                    elif item_name == "ItemId" and item_value != "None":
+                        all_items.append(item_value)
+        except Exception as e:
+            print(f"Erreur lors du traitement de {file} : {e}")
+    
+    for file in files:
+        try:
+            myAsset = UAsset(file, EngineVersion.VER_UE4_27)
+            json_asset = json.loads(myAsset.SerializeJson())
+
+            for data in json_asset.get("Exports", [{}])[0].get("Table", {}).get("Data", []):
+                for item in data.get("Value", []):
+                    item_name = item.get("Name")
+                    item_value = item.get("Value")
+
+                    if item_name == "ItemId" and item_value in utils.important_items:
+                        continue
+       
+                    if item_name == "Gold" and all_gold:
+                        selected_gold = random.choice(all_gold)
+                        if item["Value"] != 0:
+                            all_gold.remove(selected_gold)
+                            item["Value"] = selected_gold
+                    
+                    elif item_name == "ItemId" and all_items:
+                        selected_item = random.choice(all_items)
+                        if item["Value"] != None:
+                            all_items.remove(selected_item)
+                            item["Value"] = selected_item
+
+            ModifiedAsset = UAsset.DeserializeJson(json.dumps(json_asset))
+            output_path = f"./Game-WindowsNoEditor_test/Game/Content/Nicola/Data/DataTable/{os.path.basename(file)}"
+            ModifiedAsset.Write(output_path)
+
+        except Exception as e:
+            print(f"An error occured with : {file} : {e}")
+
+def randomize_shine_items_no_dupes():
+    myAsset = UAsset("./uasset/GOP_ShineSearchObject.uasset", EngineVersion.VER_UE4_27)
+    json_asset = json.loads(myAsset.SerializeJson())
+
+    all_gold = []
+    all_items = []
+
+    for data in json_asset.get("Exports", [{}])[0].get("Table", {}).get("Data", []):
+        for item in data.get("Value", []):
+            item_name = item.get("Name")
+            item_value = item.get("Value")
+
+            if item_name in {"Gold1", "Gold2", "Gold3"} and item_value != 0:
+                all_gold.append(item_value)
+            elif item_name in {"ItemId1", "ItemId2", "ItemId3"} and item_value != "None":
+                all_items.append(item_value)
+
+    try:
+        for data in json_asset.get("Exports", [{}])[0].get("Table", {}).get("Data", []):
+            for item in data.get("Value", []):
+                item_name = item.get("Name")
+
+                if item_name in {"Gold1", "Gold2", "Gold3"} and all_gold:
+                    selected_gold = random.choice(all_gold)
+                    if item["Value"] != 0:
+                        all_gold.remove(selected_gold)
+                        item["Value"] = selected_gold
+
+                elif item_name in {"ItemId1", "ItemId2", "ItemId3"} and all_items:
+                    selected_item = random.choice(all_items)
+                    if item["Value"] != "None":
+                        all_items.remove(selected_item)
+                        item["Value"] = selected_item
+
+        ModifiedAsset = UAsset.DeserializeJson(json.dumps(json_asset))
+        ModifiedAsset.Write(f"./Game-WindowsNoEditor_test/Game/Content/Nicola/Data/DataTable/GOP_ShineSearchObject.uasset")
+
+    except Exception as e:
+        print(f"An error occured : {e}")
+    
