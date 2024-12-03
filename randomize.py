@@ -320,4 +320,3 @@ def randomize_shine_items_no_dupes():
     except Exception as e:
         print(f"An error occured : {e}")
     
-randomize_all_area_loot_no_dupes()
