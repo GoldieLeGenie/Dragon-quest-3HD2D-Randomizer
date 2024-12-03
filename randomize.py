@@ -217,7 +217,6 @@ def randomize_learning():
     ModifiedAsset.Write("./Game-WindowsNoEditor_test/Game/Content/Nicola/Data/DataTable/GOP_Learning.uasset")
 
 
-
 def randomize_all_area_loot_no_dupes():
     all_gold = []
     all_items = []
@@ -228,7 +227,6 @@ def randomize_all_area_loot_no_dupes():
         for file in os.listdir(directory)
         if file.startswith("GOP_SearchObject") and file.endswith(".uasset")
     ]
-    
     for file in files:
         try:
             myAsset = UAsset(file, EngineVersion.VER_UE4_27)
@@ -244,6 +242,7 @@ def randomize_all_area_loot_no_dupes():
 
                     if item_name == "Gold" and item_value != 0:
                         all_gold.append(item_value)
+
                     elif item_name == "ItemId" and item_value != "None":
                         all_items.append(item_value)
         except Exception as e:
@@ -262,17 +261,17 @@ def randomize_all_area_loot_no_dupes():
                     if item_name == "ItemId" and item_value in utils.important_items:
                         continue
        
-                    if item_name == "Gold" and all_gold:
-                        selected_gold = random.choice(all_gold)
+                    if item_name in {"Gold"} and all_gold:
                         if item["Value"] != 0:
-                            all_gold.remove(selected_gold)
+                            selected_gold = random.choice(all_gold)
                             item["Value"] = selected_gold
-                    
-                    elif item_name == "ItemId" and all_items:
-                        selected_item = random.choice(all_items)
-                        if item["Value"] != None:
-                            all_items.remove(selected_item)
+                            all_gold.remove(selected_gold)
+                            
+                    elif item_name in {"ItemId"} and all_items:
+                        if item["Value"] != "None":
+                            selected_item = random.choice(all_items)
                             item["Value"] = selected_item
+                            all_items.remove(selected_item)
 
             ModifiedAsset = UAsset.DeserializeJson(json.dumps(json_asset))
             output_path = f"./Game-WindowsNoEditor_test/Game/Content/Nicola/Data/DataTable/{os.path.basename(file)}"
@@ -321,3 +320,4 @@ def randomize_shine_items_no_dupes():
     except Exception as e:
         print(f"An error occured : {e}")
     
+randomize_all_area_loot_no_dupes()
