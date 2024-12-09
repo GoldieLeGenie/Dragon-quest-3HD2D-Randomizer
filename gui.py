@@ -5,12 +5,20 @@ import randomize
 import subprocess
 import shutil
 import os
+import sys
 
 # Paths and commands
-unrealpak_path = r"u4pak.py"
+def resource_path(relative_path):
+    """Obtenir le chemin absolu d'une ressource (compatible avec PyInstaller)."""
+    if hasattr(sys, "_MEIPASS"):  # Si PyInstaller a empaqueté le script
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
+
+unrealpak_path = resource_path("u4pak.py")
 source_folder = r"Game"
-command = ["python" ,unrealpak_path, "pack", "pak/Game-WindowsNoEditor_test.pak" , source_folder]
+# command = ["python" ,unrealpak_path, "pack", "pak/Game-WindowsNoEditor_test.pak" , source_folder]
 game_folder = r"Game/Content/Nicola/Data/DataTable"
+command = ["python", unrealpak_path, "pack", "pak/Game-WindowsNoEditor_test.pak", source_folder]
 
 def clear_game_folder():
     try:
