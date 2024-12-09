@@ -7,10 +7,10 @@ import shutil
 import os
 
 # Paths and commands
-unrealpak_path = r"repak.exe"
-source_folder = r"Game-WindowsNoEditor_test"
-command = [unrealpak_path, "pack", source_folder]
-game_folder = r"Game-WindowsNoEditor_test/Game/Content/Nicola/Data/DataTable"
+unrealpak_path = r"u4pak.py"
+source_folder = r"Game"
+command = ["python" ,unrealpak_path, "pack", "pak/Game-WindowsNoEditor_test.pak" , source_folder]
+game_folder = r"Game/Content/Nicola/Data/DataTable"
 
 def clear_game_folder():
     try:
@@ -41,8 +41,13 @@ def toggle_shine_options():
     min_shine_spinbox.config(state=state)
     max_shine_spinbox.config(state=state)
 
+def toggle_inn_price_option():
+    state = 'normal' if inn_var.get() else 'disabled'
+    min_inn_spinbox.config(state=state)
+    max_inn_spinbox.config(state=state)
+
 def process_selection():
-    if not any([area_no_dupe_var.get(), shop_var.get(), price_var.get(), area_var.get(), shine_var.get(), medals_var.get(), other_var.get(), monster_var.get(), monster_drop_var.get(), skills_var.get(), shine_no_dupe_var.get()]):
+    if not any([area_no_dupe_var.get(), shop_var.get(), price_var.get(), area_var.get(), shine_var.get(), medals_var.get(), other_var.get(), monster_var.get(), monster_drop_var.get(), skills_var.get(), shine_no_dupe_var.get(), inn_var.get()]):
         messagebox.showerror("Error", "Please select at least one randomization option.")
         return
     
@@ -80,6 +85,15 @@ def process_selection():
         else:
             randomize.randomize_shine_items(min_gold, max_gold)
     
+    if inn_var.get():
+        min_price_inn = int(min_inn_spinbox.get())
+        max_price_inn = int(max_inn_spinbox.get())
+        if min_price_inn >= max_price_inn:
+            messagebox.showerror("Error", "Min Price should be less than Max Price")
+            return
+        else:
+            randomize.randomize_inn(min_gold, max_gold)
+
     if medals_var.get():
         randomize.randomize_mini_medals_rewards()
     if other_var.get():
@@ -96,7 +110,6 @@ def process_selection():
         randomize.randomize_all_area_loot_no_dupes()
     try:
         subprocess.run(command, check=True)
-        shutil.move("Game-WindowsNoEditor_test.pak", "./pak/Game-WindowsNoEditor_test.pak")
         clear_game_folder()
         messagebox.showinfo("Success", "Randomization completed! Copy the .pak file and paste it into the game folder's pak directory.")
     except subprocess.CalledProcessError:
@@ -105,7 +118,7 @@ def process_selection():
 
 # Main interface
 root = ttk.Window(themename="darkly")  # Options: darkly, litera, journal, etc.
-root.title("DQ3-HD-RANDOMIZER V0.3 by Goldie :)")
+root.title("DQ3-HD-RANDOMIZER by Goldie")
 root.geometry('500x700')
 
 notebook = ttk.Notebook(root, bootstyle="primary")
@@ -132,6 +145,7 @@ monster_drop_var = ttk.BooleanVar()
 shine_var = ttk.BooleanVar()
 skills_var = ttk.BooleanVar()
 shine_no_dupe_var = ttk.BooleanVar()
+inn_var = ttk.BooleanVar()
 
 # Shop tab
 ttk.Checkbutton(shop_tab, text="Randomize Shop Items", variable=shop_var, bootstyle="info").pack(anchor="w", pady=5)
@@ -149,6 +163,23 @@ ttk.Label(price_frame, text="Max Gold:").grid(row=1, column=0, sticky="w", padx=
 max_price_spinbox = ttk.Spinbox(price_frame, from_=1, to=500000, state='disabled', width=10)
 max_price_spinbox.set(500000)
 max_price_spinbox.grid(row=1, column=1, padx=20)
+
+ttk.Checkbutton(shop_tab, text="Randomize Inn Prices", variable=inn_var, bootstyle="info", command=toggle_inn_price_option).pack(anchor="w", pady=5)
+inn_frame = ttk.Frame(shop_tab)
+inn_frame.pack(anchor="w", pady=5)
+
+ttk.Label(inn_frame, text="Min Gold:").grid(row=0, column=0, sticky="w", padx=10)
+min_inn_spinbox = ttk.Spinbox(inn_frame, from_=1, to=500000, state='disabled',width=10)
+min_inn_spinbox.set(1)  # Default value
+min_inn_spinbox.grid(row=0, column=1, padx=20)
+
+ttk.Label(inn_frame, text="Max Gold:").grid(row=1, column=0, sticky="w", padx=10)
+max_inn_spinbox = ttk.Spinbox(inn_frame, from_=1, to=500000, state='disabled', width=10)
+max_inn_spinbox.set(500000)  # Default value
+max_inn_spinbox.grid(row=1, column=1, padx=20)
+
+
+
 
 # Area tab
 ttk.Checkbutton(area_tab, text="Randomize Areas\n(only with items available in area)", variable=area_no_dupe_var).pack(anchor="w", pady=5)
@@ -198,7 +229,6 @@ max_shine_spinbox = ttk.Spinbox(shine_frame, from_=1, to=500000, state='disabled
 max_shine_spinbox.set(500000)  # Default value
 max_shine_spinbox.grid(row=1, column=1, padx=20)
 
-
 # Other tab
 ttk.Checkbutton(other_tab, text="Randomize Learning Skills", variable=skills_var).pack(anchor="w", pady=5)
 ttk.Checkbutton(other_tab, text="Randomize Mini-Medals Rewards", variable=medals_var).pack(anchor="w", pady=5)
@@ -207,7 +237,7 @@ ttk.Checkbutton(other_tab, text="Randomize Monster Spawns", variable=monster_var
 ttk.Checkbutton(other_tab, text="Randomize Monster Drops", variable=monster_drop_var).pack(anchor="w", pady=5)
 
 
-apply_button = ttk.Button(root, text="Randomize", command=process_selection, bootstyle="success")
+apply_button = ttk.Button(root, text="Randomize", command=process_selection, bootstyle="success-outline")
 apply_button.pack(pady=10)
 
 def start():

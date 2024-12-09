@@ -26,7 +26,7 @@ def randomize_buy_price(min_price, max_price):
                         BuyPrice['Value'] = gold
 
         ModifiedAsset = UAsset.DeserializeJson(json.dumps(json_asset))
-        ModifiedAsset.Write("./Game-WindowsNoEditor_test/Game/Content/Nicola/Data/DataTable/GOP_Item.uasset")
+        ModifiedAsset.Write("./Game/Content/Nicola/Data/DataTable/GOP_Item.uasset")
     except Exception as e:
         messagebox.showerror("Error", f"An error occured : {e}")
 
@@ -43,7 +43,7 @@ def randomize_shop_items():
                         prod["Value"] = item
 
         ModifiedAsset = UAsset.DeserializeJson(json.dumps(json_asset))
-        ModifiedAsset.Write("./Game-WindowsNoEditor_test/Game/Content/Nicola/Data/DataTable/GOP_Shop.uasset")
+        ModifiedAsset.Write("./Game/Content/Nicola/Data/DataTable/GOP_Shop.uasset")
     except Exception as e:
         messagebox.showerror("Error", f"An error occured : {e}")
 
@@ -58,7 +58,7 @@ def randomize_mini_medals_rewards():
                 prod["Value"] = new_value
             
     ModifiedAsset = UAsset.DeserializeJson(json.dumps(json_asset))
-    ModifiedAsset.Write("./Game-WindowsNoEditor_test/Game/Content/Nicola/Data/DataTable/GOP_Medal.uasset")
+    ModifiedAsset.Write("./Game/Content/Nicola/Data/DataTable/GOP_Medal.uasset")
 
 
 def randomize_all_area_loot(min_price, max_price,gold_percentage, items_percentage, empty_percentage):
@@ -102,7 +102,7 @@ def randomize_all_area_loot(min_price, max_price,gold_percentage, items_percenta
                     elif draw_result == "empty" and item_name == "FlagName":
                         item["Value"] = "EGOPEnumSearchType::NONE"
             ModifiedAsset = UAsset.DeserializeJson(json.dumps(json_asset))
-            ModifiedAsset.Write(f"./Game-WindowsNoEditor_test/Game/Content/Nicola/Data/DataTable/{os.path.basename(file)}")
+            ModifiedAsset.Write(f"./Game/Content/Nicola/Data/DataTable/{os.path.basename(file)}")
         except Exception as e:
             print(f"ERROR : {e}")
 
@@ -129,7 +129,7 @@ def randomize_start_bag_items():
           
             
     ModifiedAsset = UAsset.DeserializeJson(json.dumps(json_asset))
-    ModifiedAsset.Write("./Game-WindowsNoEditor_test/Game/Content/Nicola/Data/DataTable/GOP_Unit_ItemBag.uasset")
+    ModifiedAsset.Write("./Game/Content/Nicola/Data/DataTable/GOP_Unit_ItemBag.uasset")
 
 
 def randomize_monster_drop():
@@ -144,7 +144,7 @@ def randomize_monster_drop():
                     Drop_Item["Value"] = item
                 
     ModifiedAsset = UAsset.DeserializeJson(json.dumps(json_asset))
-    ModifiedAsset.Write("./Game-WindowsNoEditor_test/Game/Content/Nicola/Data/DataTable/GOP_Monster.uasset")
+    ModifiedAsset.Write("./Game/Content/Nicola/Data/DataTable/GOP_Monster.uasset")
 
 def randomize_monster_spawn():
     myAsset = UAsset("./uasset/GOP_Encounter_Monster.uasset", EngineVersion.VER_UE4_27)
@@ -161,7 +161,7 @@ def randomize_monster_spawn():
                     MonsterId["Value"] =  monster
  
     ModifiedAsset = UAsset.DeserializeJson(json.dumps(json_asset))
-    ModifiedAsset.Write("./Game-WindowsNoEditor_test/Game/Content/Nicola/Data/DataTable/GOP_Encounter_Monster.uasset")
+    ModifiedAsset.Write("./Game/Content/Nicola/Data/DataTable/GOP_Encounter_Monster.uasset")
 
 
 def randomize_shine_items(min_gold, max_gold):
@@ -183,7 +183,7 @@ def randomize_shine_items(min_gold, max_gold):
                     item["Value"] = random.choice(utils.item_names)
 
     ModifiedAsset = UAsset.DeserializeJson(json.dumps(json_asset))
-    ModifiedAsset.Write(f"./Game-WindowsNoEditor_test/Game/Content/Nicola/Data/DataTable/GOP_ShineSearchObject.uasset")
+    ModifiedAsset.Write(f"./Game/Content/Nicola/Data/DataTable/GOP_ShineSearchObject.uasset")
         
 
 def randomize_learning():
@@ -214,7 +214,7 @@ def randomize_learning():
                 spell["Value"] = skills_by_category[category].pop(0)  
 
     ModifiedAsset = UAsset.DeserializeJson(json.dumps(json_asset))
-    ModifiedAsset.Write("./Game-WindowsNoEditor_test/Game/Content/Nicola/Data/DataTable/GOP_Learning.uasset")
+    ModifiedAsset.Write("./Game/Content/Nicola/Data/DataTable/GOP_Learning.uasset")
 
 
 def randomize_all_area_loot_no_dupes():
@@ -274,7 +274,7 @@ def randomize_all_area_loot_no_dupes():
                             all_items.remove(selected_item)
 
             ModifiedAsset = UAsset.DeserializeJson(json.dumps(json_asset))
-            output_path = f"./Game-WindowsNoEditor_test/Game/Content/Nicola/Data/DataTable/{os.path.basename(file)}"
+            output_path = f"./Game/Content/Nicola/Data/DataTable/{os.path.basename(file)}"
             ModifiedAsset.Write(output_path)
 
         except Exception as e:
@@ -315,8 +315,22 @@ def randomize_shine_items_no_dupes():
                         item["Value"] = selected_item
 
         ModifiedAsset = UAsset.DeserializeJson(json.dumps(json_asset))
-        ModifiedAsset.Write(f"./Game-WindowsNoEditor_test/Game/Content/Nicola/Data/DataTable/GOP_ShineSearchObject.uasset")
+        ModifiedAsset.Write(f"./Game/Content/Nicola/Data/DataTable/GOP_ShineSearchObject.uasset")
 
     except Exception as e:
         print(f"An error occured : {e}")
+
+
+def randomize_inn(min_price,max_price):
+    myAsset = UAsset("./uasset/GOP_Inn.uasset", EngineVersion.VER_UE4_27)
+    json_asset = json.loads(myAsset.SerializeJson())
+  
     
+    for data in json_asset["Exports"][0]["Table"]["Data"]:
+        for encounter in data["Value"]:
+            if encounter['Name'] == "Price":
+                encounter["Value"] = random.randint(min_price, max_price)
+                    
+    ModifiedAsset = UAsset.DeserializeJson(json.dumps(json_asset))
+    ModifiedAsset.Write("./Game/Content/Nicola/Data/DataTable/GOP_Inn.uasset")
+

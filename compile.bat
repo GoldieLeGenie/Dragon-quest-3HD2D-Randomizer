@@ -1,1 +1,1 @@
-pyinstaller --icon=icon.ico --add-binary "Game-WindowsNoEditor_test;." --add-binary "jsonfile;." --add-binary "netstandard2.0;." --add-binary "pak;." --add-binary "uasset;." --add-binary "randomize.py;." --add-binary "utils.py;." --add-binary "gui.py;." -F -w main.py
+pyinstaller --icon=icon.ico --add-binary "Game;." --add-binary "jsonfile;." --add-binary "netstandard2.0;." --add-binary "pak;." --add-binary "uasset;." --add-binary "randomize.py;." --add-binary "utils.py;." --add-binary "gui.py;." --add-binary "u4pak.py;." -F -w main.py
