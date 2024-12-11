@@ -80,7 +80,6 @@ def items_or_golds_or_empty(pourcentage_golds, pourcentage_items, pourcentage_em
     else:
         return "empty"
 
-
 # myAsset = UAsset("./uasset/GOP_Encounter_Monster.uasset", EngineVersion.VER_UE4_27)
 # with open("./jsonfile/GOP_Encounter_Monster.json", "w", encoding="utf-8") as f:
 #     f.write(myAsset.SerializeJson())

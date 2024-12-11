@@ -100,7 +100,7 @@ def process_selection():
             messagebox.showerror("Error", "Min Price should be less than Max Price")
             return
         else:
-            randomize.randomize_inn(min_gold, max_gold)
+            randomize.randomize_inn(min_price_inn, max_price_inn)
 
     if medals_var.get():
         randomize.randomize_mini_medals_rewards()
